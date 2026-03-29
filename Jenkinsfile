@@ -56,16 +56,18 @@ pipeline {
         }
         stage('Apply Terraform') {
             steps {
-                input message: "Approve Terraform Apply?", ok: "Deploy"
-                withCredentials([[
-                    $class: 'AmazonWebServicesCredentialsBinding',
-                    credentialsId: 'jenkinsuser'
-                ]]) {
-                    sh '''
-                    export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
-                    export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
-                    terraform apply -auto-approve tfplan
-                    '''
+				script {
+					input message: "Approve Terraform Apply?", ok: "Deploy"
+					withCredentials([[
+						$class: 'AmazonWebServicesCredentialsBinding',
+						credentialsId: 'jenkinsuser'
+					]]) {
+						sh '''
+						export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+						export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+						terraform apply -auto-approve tfplan
+						'''
+					}	
                 }
             }
         }
