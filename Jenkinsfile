@@ -20,7 +20,7 @@ pipeline {
         }
         stage('Checkout Code') {
             steps {
-                git branch: 'main', url: 'https://github.com/shinzo2x0/jenkins-s3-test/blob/main/Jenkinsfile' 
+                git branch: 'main', url: 'https://github.com/shinzo2x0/jenkins-s3-test' 
             }
         }
 
