@@ -57,7 +57,7 @@ pipeline {
         stage('Apply Terraform') {
             steps {
 				script {
-					input message: "Approve Terraform Apply?", ok: "Deploy"
+					terraform apply -auto-approve tfplan
 					withCredentials([[
 						$class: 'AmazonWebServicesCredentialsBinding',
 						credentialsId: 'jenkinsuser'
@@ -71,6 +71,22 @@ pipeline {
                 }
             }
         }
+		stage('Upload Images to S3') {
+			steps {
+				withCredentials([[
+					$class: 'AmazonWebServicesCredentialsBinding',
+					credentialsId: 'jenkinsuser'
+				]]) {
+					sh '''
+					export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+					export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+					export AWS_DEFAULT_REGION=$AWS_REGION
+
+					aws s3 cp images/ s3://jenkins-bucket-20260330023333843200000001/images/ --recursive
+					'''
+				}
+			}
+		}
     }
     post {
         success {
